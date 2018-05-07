@@ -9,19 +9,20 @@ import {
   Tooltip,
   Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { inject } from 'mobx-react'
+import { inject, observer} from 'mobx-react'
 import Store from '../stores/store'
 import owasp from 'owasp-password-strength-test'
 
 @inject('Store')
+@observer
 class Register extends Component {
   constructor(props) {
     super(props)
     this.state = {
       username: '',
       password: '',
-      strength: 'weak',
-      strengthToolTip: 'weak'
+      strength: 'strong password is recommended',
+      strengthToolTip: 'strong password is recommended'
     }
   }
 
@@ -34,18 +35,26 @@ class Register extends Component {
     })
   }
 
+  componentDidMount () {
+    Store.userFetch()
+  }
+
   register = (e) => {
     e.preventDefault()
     if (this.state.strength === 'weak') {
       alert('password is not strong')
-    } else if (this.state.username === '' && this.state.password === '') {
+    } else if (this.state.username === '' ||this.state.password === '') {
       alert('fill all the fields')
-    }else {
+    } else if (Store.userList.indexOf(this.state.username) !== -1) {
+      alert('username is already taken !')
+    } else {
       Store.register(this.state.username, this.state.password)
       this.clear()
       alert('registered !')
-      Store.login(this.state.username, this.state.password)
-      this.props.history.push('/')
+      Store.login(this.state.username, this.state.password, () => {
+        this.props.history.push('/')
+      })
+
     }
   }
 

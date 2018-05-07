@@ -9,6 +9,17 @@ const cryptr = new Cryptr(process.env.REACT_APP_KEY)
 class Store {
 
   @observable AppPasses = 'empty'
+  @observable userList = []
+
+  userFetch = () => {
+    fire.database().ref('users').on('value', snap => {
+      let temp = []
+      snap.forEach(element => {
+        temp.push(element.val().username)
+      })
+      this.userList = temp
+    })
+  }
 
   fetch = () => {
     fire.database().ref('AppPasses').on('value', snap => {
@@ -33,12 +44,12 @@ class Store {
       username,
       password,
     })
+
+    // FIREBASE REGISTER
     // fire.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // ...
-    // });
+    //   alert(error.message)
+    // })
+    // callback()
   }
 
   addAppPass = (site, username, password) => {
@@ -72,6 +83,15 @@ class Store {
     itemRef.remove()
   }
 
+  logout = () => {
+    //FIREBASE LOGOUT
+    // fire.auth().signOut().then(function() {
+    //   localStorage.clear()
+    // }).catch(function(error) {
+    //   alert(error.message)
+    // })
+  }
+
   login = (username, password, callback) => {
     let isFound = false
     fire.database().ref('users').once('value', function (snapshot) {
@@ -89,6 +109,29 @@ class Store {
         alert('wrong username or password')
       }
     })
+
+    // FIREBASE AUTH
+    // let isFound = true
+    // fire.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
+    //   alert(error.message)
+    //   isFound = false
+    //   console.log(isFound)
+    // })
+
+    // if (isFound) {
+    //   password = bcrypt.hashSync(password, 10)
+    //   fire.auth().onAuthStateChanged(function(user) {
+    //     if (user) {
+    //       localStorage.setItem('user', user.email)
+    //       localStorage.setItem('pass', password)
+    //       localStorage.setItem('key', user.uid)
+    //       callback()
+    //     } else {
+    //       localStorage.clear()
+    //     }
+    //   })
+    // }
+
   }
 }
 

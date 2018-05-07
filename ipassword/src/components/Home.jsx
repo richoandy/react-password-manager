@@ -11,6 +11,7 @@ class Home extends Component {
 
   logout = (e) => {
     localStorage.clear()
+    Store.logout()
     this.props.props.history.push('/login')
   }
 
