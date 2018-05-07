@@ -4,10 +4,14 @@ import {
   Col,
   Row,
   FormGroup,
-  FormControl } from 'react-bootstrap'
+  FormControl,
+  OverlayTrigger,
+  Tooltip,
+  Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { inject } from 'mobx-react'
 import Store from '../stores/store'
+import owasp from 'owasp-password-strength-test'
 
 @inject('Store')
 class Register extends Component {
@@ -15,33 +19,65 @@ class Register extends Component {
     super(props)
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      strength: 'weak',
+      strengthToolTip: 'weak'
     }
   }
 
   clear = () => {
     this.setState({
       username: '',
-      password: ''
+      password: '',
+      strength: 'weak',
+      strengthToolTip: 'weak'
     })
   }
 
   register = (e) => {
     e.preventDefault()
-    Store.register(this.state.username, this.state.password)
-    this.clear()
-    alert('registered !')
-    Store.login(this.state.username, this.state.password)
-    this.props.history.push('/')
+    if (this.state.strength === 'weak') {
+      alert('password is not strong')
+    } else if (this.state.username === '' && this.state.password === '') {
+      alert('fill all the fields')
+    }else {
+      Store.register(this.state.username, this.state.password)
+      this.clear()
+      alert('registered !')
+      Store.login(this.state.username, this.state.password)
+      this.props.history.push('/')
+    }
   }
 
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
+    }, () => {
+      this.validatePasswordStrength()
     })
   }
 
+  validatePasswordStrength = () => {
+    let result = owasp.test(this.state.password)
+    if (!result.strong) {
+      this.setState({
+        strengthToolTip: result.errors,
+        strength: 'weak'
+      })
+    } else {
+      this.setState({
+        strengthToolTip: 'Strong password',
+        strength: 'strong'
+      })
+    }
+  }
+
   render () {
+    const tooltip = (
+      <Tooltip id="tooltip">
+        { this.state.strengthToolTip}
+      </Tooltip>
+    )
     return (
       <div>
         <Grid>
@@ -54,8 +90,16 @@ class Register extends Component {
               </FormGroup>
               <FormGroup bsSize="large">
                 <FormControl type="password" placeholder="Password" name="password" onChange={this.handleChange} />
+                <OverlayTrigger placement="bottom" overlay={tooltip}>
+                    <Button style={{margin: '10px'}}>{this.state.strength}</Button>
+                  </OverlayTrigger>
               </FormGroup>
-              <input type="submit" value="Submit" />
+              {
+                (this.state.strength === 'strong') ?
+                <input type="submit" value="Submit" /> :
+                <div> </div>
+              }
+              
             </form>
             <Link to = { `/login` } >
             iPassword registered user ? login here

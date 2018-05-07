@@ -9,8 +9,10 @@ import {
 import { Link } from 'react-router-dom'
 import { inject } from 'mobx-react'
 import Store from '../stores/store'
+import { observer } from 'mobx-react';
 
 @inject('Store')
+@observer
 class Login extends Component {
   constructor(props) {
     super(props)
@@ -22,8 +24,9 @@ class Login extends Component {
 
   verifyLogin = (e) => {
     e.preventDefault()
-    Store.login(this.state.username, this.state.password)
-    this.props.history.push('/')
+    Store.login(this.state.username, this.state.password,  ()  => {
+      this.props.history.push('/')
+    })
   }
 
   handleChange = (e) => {

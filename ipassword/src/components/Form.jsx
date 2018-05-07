@@ -22,32 +22,33 @@ class Form extends Component {
       site: '',
       username: '',
       password: '',
-      strength: 'weak',
-      strengthToolTip: 'weak'
+      strength: 'strong password is recommended',
+      strengthToolTip: 'strong password is recommended'
     }
   }
 
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
+    }, () => {
+      this.validatePasswordStrength()
     })
-
-    if(e.target.name === 'password') {
-      let result = owasp.test(this.state.password)
-      if (!result.strong) {
-        this.setState({
-          strengthToolTip: result.errors,
-          strength: 'weak'
-        })
-      } else {
-        this.setState({
-          strengthToolTip: 'Strong password',
-          strength: 'strong'
-        })
-      }
-    }
   }
 
+  validatePasswordStrength = () => {
+    let result = owasp.test(this.state.password)
+    if (!result.strong) {
+      this.setState({
+        strengthToolTip: result.errors,
+        strength: 'weak'
+      })
+    } else {
+      this.setState({
+        strengthToolTip: 'Strong password',
+        strength: 'strong'
+      })
+    }
+  }
 
   addAppPass = (e) => {
     e.preventDefault()
@@ -57,6 +58,12 @@ class Form extends Component {
 
     if (site === '' || username === '' || password === '') {
       alert('all fields must not be empty')
+    } else if (this.state.strength === 'weak') {
+      let answer = window.confirm('this password is not strong, continue to submit ?')
+      if (answer) {
+        Store.addAppPass(site, username, password)
+        this.props.history.push('/')
+      }
     } else {
       Store.addAppPass(site, username, password)
       this.props.history.push('/')

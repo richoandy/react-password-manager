@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './download.jpg';
+import logo from './logo.png';
 import './App.css';
 import Store from './stores/store'
 import { inject, observer } from 'mobx-react';
@@ -13,7 +13,7 @@ import Home from './components/Home'
 import Login from './components/Login'
 import Register from './components/Register'
 import Form from './components/Form'
-import { Provider } from 'mobx-react';
+import { Provider } from 'mobx-react'
 
 class App extends Component {
   render() {

@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 import { inject } from 'mobx-react'
 import Store from '../stores/store'
 import { OverlayTrigger, Button, Tooltip } from 'react-bootstrap'
+import fire from '../fire'
+import bcrypt from 'bcryptjs'
 
 @inject('Store')
 class List extends Component {
@@ -42,8 +44,10 @@ class List extends Component {
 
   showPassword = (e) => {
     e.preventDefault()
+    const pass = localStorage.getItem('pass')
+ 
     if (this.state.buttonText === 'show') {
-      if (this.state.password === localStorage.getItem('pass')) {
+      if (bcrypt.compareSync(this.state.password, pass)) {
         this.setState({
           passVisibility: 'text',
           buttonText: 'hide',
@@ -56,7 +60,6 @@ class List extends Component {
           password: ''
         })
       }
-      
     }
   }
 
@@ -93,12 +96,30 @@ class List extends Component {
   }
 
   updateIt = () => {
-    this.setState({
-      isEditing: false
-    })
-    let id = this.props.data.id
-    Store.updateAppPass(id, this.state.newUsername, this.state.newPassword)
-    this.validatePassStrength(this.state.newPassword)
+    if (this.state.newUsername === '' || this.state.newPassword === '') {
+      alert('username / password is required')
+    } else if (this.state.strength === 'weak') {
+      let answer = window.confirm('this password is not strong, continue to submit ?')
+      if (answer) {
+        let id = this.props.data.id
+        Store.updateAppPass(id, this.state.newUsername, this.state.newPassword)
+        this.validatePassStrength(this.state.newPassword)
+        this.setState({
+          isEditing: false,
+          passVisibility: 'password',
+          buttonText: 'show'
+        })
+      }
+    } else {
+      this.setState({
+        isEditing: false,
+        passVisibility: 'password',
+        buttonText: 'show'
+      })
+      let id = this.props.data.id
+      Store.updateAppPass(id, this.state.newUsername, this.state.newPassword)
+      this.validatePassStrength(this.state.newPassword)
+    }
   }
 
   deleteIt = () => {
@@ -108,6 +129,8 @@ class List extends Component {
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
+    }, () => {
+      this.validatePassStrength(this.state.newPassword)
     })
   }
   
@@ -133,7 +156,7 @@ class List extends Component {
           <td>
             { this.state.strength }
             <OverlayTrigger placement="bottom" overlay={tooltip}>
-              <Button bsStyle="default">info</Button>
+              <Button bsStyle="default" style={{margin: '5px'}}>info</Button>
             </OverlayTrigger>
           </td>
           <td>
@@ -168,14 +191,17 @@ class List extends Component {
         </td>
         <td>
         { this.state.strength }
+        <OverlayTrigger placement="bottom" overlay={tooltip}>
+          <Button bsStyle="default" style={{margin: '5px'}} >info</Button>
+        </OverlayTrigger>
         </td>
         <td>
           
         </td>
         <td>
-          <button onClick={this.updateIt}>save</button>
+          <button onClick={this.updateIt} style={{margin: '10px'}}>save</button>
           
-          <button onClick={this.cancelIt}>cancel</button>
+          <button onClick={this.cancelIt} style={{margin: '10px'}}>cancel</button>
         </td>
       </tr>
       )
