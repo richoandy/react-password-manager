@@ -100,7 +100,8 @@ class Register extends Component {
               <FormGroup bsSize="large">
                 <FormControl type="password" placeholder="Password" name="password" onChange={this.handleChange} />
                 <OverlayTrigger placement="bottom" overlay={tooltip}>
-                    <Button style={{margin: '10px'}}>{this.state.strength}</Button>
+                    <Button style={{margin: '10px'}} bsStyle={(this.state.strength === 'weak') ? 'danger' : 'success'
+            }>{this.state.strength}</Button>
                   </OverlayTrigger>
               </FormGroup>
               {

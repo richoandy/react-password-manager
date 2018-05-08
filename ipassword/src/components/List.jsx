@@ -154,9 +154,10 @@ class List extends Component {
             <input type={this.state.passVisibility} value={this.props.data.password} disabled/>
           </td>
           <td>
-            { this.state.strength }
+            
             <OverlayTrigger placement="bottom" overlay={tooltip}>
-              <Button bsStyle="default" style={{margin: '5px'}}>info</Button>
+              <Button bsStyle={(this.state.strength === 'weak') ? 'danger' : 'success'
+            } style={{margin: '5px'}}>{ this.state.strength }</Button>
             </OverlayTrigger>
           </td>
           <td>
@@ -172,7 +173,7 @@ class List extends Component {
             </td>
             :
             <td>
-            <a onClick={this.editNow}>edit</a> | <a onClick={ () => this.deleteIt() }>delete</a>
+            <a onClick={this.editNow}><i className="fa fa-edit"></i></a> | <a onClick={ () => this.deleteIt() }><i className="fa fa-trash"></i></a>
           </td>
           }
         </tr>
@@ -190,9 +191,10 @@ class List extends Component {
         <input type={this.state.passVisibility} value={this.state.newPassword} name="newPassword" onChange={this.handleChange} />
         </td>
         <td>
-        { this.state.strength }
-        <OverlayTrigger placement="bottom" overlay={tooltip}>
-          <Button bsStyle="default" style={{margin: '5px'}} >info</Button>
+        
+        <OverlayTrigger placement="bottom" overlay=     {tooltip}>
+          <Button bsStyle={(this.state.strength === 'weak') ? 'danger' : 'success'
+          } style={{margin: '5px'}} >{ this.state.strength }</Button>
         </OverlayTrigger>
         </td>
         <td>

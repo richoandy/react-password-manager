@@ -14,7 +14,6 @@ import { inject } from 'mobx-react'
 import Store from '../stores/store'
 
 @inject('Store')
-
 class Form extends Component {
   constructor() {
     super ()
@@ -94,14 +93,13 @@ class Form extends Component {
                 <FormGroup bsSize="large">
                   <FormControl type="password" placeholder="Password" name="password" onChange={this.handleChange}/>
                   <OverlayTrigger placement="bottom" overlay={tooltip}>
-                    <Button style={{margin: '10px'}}>{this.state.strength}</Button>
+                    <Button style={{margin: '10px'}} bsStyle={(this.state.strength === 'weak') ? 'danger' : 'success'}>{this.state.strength}</Button>
                   </OverlayTrigger>
                 </FormGroup>
                 <input type ="submit" value="Submit" style={{margin: '10px'}} />
                 <Link to="/">
                   <button style={{margin: '10px'}}>cancel</button>
                 </Link>
-                
               </form>
               </Col>
             </Row>

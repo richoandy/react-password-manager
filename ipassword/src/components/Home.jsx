@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { inject } from 'mobx-react'
 import Store from '../stores/store'
+import './flicker.css';
 
 @inject('Store')
 
@@ -21,12 +22,12 @@ class Home extends Component {
   render () {
     return (
       <div className="container">
-      <h1>hi, {localStorage.getItem('user')}</h1>
+      <h1 className="flick">hi, {localStorage.getItem('user')}</h1>
       <Link to="/form/add">
         <Button style={{margin: '10px'}}>Add new password</Button>
       </Link>
       <Button onClick={ this.logout } style={{margin: '10px'}}>Logout</Button>
-        <HomeTable />
+      <HomeTable />
       </div>
     )
   }
